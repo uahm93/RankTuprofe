@@ -23,7 +23,6 @@ export default class OverLayTwoInput extends Component {
 
 		this.state.updateFunction(newValueOne, newValueTwo);
 
-		this.state.updateFunction(newValue);
 		this.setState({
 			isVisibleOverlay: false
 		});
@@ -34,7 +33,14 @@ export default class OverLayTwoInput extends Component {
 		this.state.updateFunction(null);
 	};
 	render() {
-		const { isVisibleOverlay, placeholderOne, placeholderTwo, inputValueOne, inputValueTwo } = this.state;
+		const {
+			isVisibleOverlay,
+			placeholderOne,
+			placeholderTwo,
+			inputValueOne,
+			inputValueTwo,
+			isPassword
+		} = this.state;
 		return (
 			<Overlay
 				fullScreen={true}
@@ -54,6 +60,8 @@ export default class OverLayTwoInput extends Component {
 						onChangeText={(value) => this.onChangeInputTwo(value)}
 						value={inputValueTwo}
 						placeholder={placeholderTwo}
+						password={isPassword}
+						secureTextEntry={true}
 					/>
 					<Button buttonStyle={styles.buttonUpdate} title="actualizar" onPress={() => this.update()} />
 					<Icon

@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import * as firebase from 'firebase';
 import UpdateUserInfo from './UpdateUserInfo';
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 export default class infoUser extends Component {
 	constructor(props) {
@@ -24,6 +25,13 @@ export default class infoUser extends Component {
 			});
 		});
 	};
+
+	reautenticate = (currentPassword) => {
+		const user = firebase.auth().currentUser;
+		const credentials = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+		return user.reauthenticateWithCredential(credentials);
+	};
+
 	checkUserAvatar = (photoUrl) => {
 		return photoUrl ? photoUrl : 'https://api.adorable.io/avatars/282/abott@adorable.pngCopy';
 	};
@@ -47,10 +55,23 @@ export default class infoUser extends Component {
 			);
 		}
 	};
-
-	returnUpdateUserEmail = async (newEmail, password) => {
-		console.log('nuevo correoo' + newEmail);
-		console.log('Nuevo password' + password);
+	updateUserEmail = async (newEmail, password) => {
+		this.reautenticate(password)
+			.then(() => {
+				const user = firebase.auth().currentUser;
+				user
+					.updateEmail(newEmail)
+					.then(() => {
+						this.refs.toast.show('Cambio de contraseña correcto', 1500);
+						firebase.auth().signOut();
+					})
+					.catch((err) => {
+						console.log(error);
+					});
+			})
+			.catch((err) => {
+				this.refs.toast.show('Tu contraseña es incorrecta', 1500);
+			});
 	};
 	render() {
 		const { displayName, email, photoUrl } = this.state.userInfo;
@@ -71,6 +92,15 @@ export default class infoUser extends Component {
 					</View>
 				</View>
 				{this.returnUpdateUserInfoComponent(this.state.userInfo)}
+				<Toast
+					ref="toast"
+					position="bottom"
+					fadeOutDuration={1000}
+					opacity={0.8}
+					positionValue={250}
+					fadeInDuration={1000}
+					textStyle={{ color: '#fff' }}
+				/>
 			</View>
 		);
 	}

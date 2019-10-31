@@ -29,7 +29,8 @@ export default class UpdateUserInfo extends Component {
 					iconNameLeft: 'at',
 					iconColorLeft: '#ccc',
 					iconColorRight: '#ccc',
-					onPress: () => this.open
+					onPress: () =>
+						this.openOverlayTwoInput('Email', 'Password', props.userInfo.email, this.updateUserEmail)
 				},
 				{
 					title: 'Cambiar contraseña',
@@ -64,7 +65,6 @@ export default class UpdateUserInfo extends Component {
 
 	updateUserEmail = async (newEmail, password) => {
 		const emailOld = this.props.userInfo.email;
-
 		if (emailOld != newEmail) {
 			this.state.updateUserEmail(newEmail, password);
 		}
@@ -74,11 +74,15 @@ export default class UpdateUserInfo extends Component {
 	openOverlayTwoInput = (placeholderOne, placeholderTwo, inputValueOne, updateFunction) => {
 		this.setState({
 			overlayComponent: (
-				<OverLayOneInput
+				<OverLayTwoInput
 					isVisibleOverlay={true}
-					placeholder={placeholder}
+					placeholderOne={placeholderOne}
+					placeholderTwo={placeholderTwo}
 					updateFunction={updateFunction}
-					inputValue={inputValue}
+					inputValueOne={inputValueOne}
+					inputValueTwo=""
+					isPassword={true}
+					updateFunction={updateFunction}
 				/>
 			)
 		});
