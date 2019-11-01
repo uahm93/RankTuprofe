@@ -3,6 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import OverLayOneInput from '../../Elements/OverlayOneImput';
 import OverLayTwoInput from '../../Elements/OverlayTwoImput';
+import OverLayThreeInput from '../../Elements/OverlayThree';
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 export default class UpdateUserInfo extends Component {
 	constructor(props) {
@@ -39,7 +41,13 @@ export default class UpdateUserInfo extends Component {
 					iconNameLeft: 'lock-reset',
 					iconColorLeft: '#ccc',
 					iconColorRight: '#ccc',
-					onPress: () => console.log('Click en cambiar pw')
+					onPress: () =>
+						this.openOverlayThreeInputs(
+							'Tu contraseña',
+							'Nueva contraseña',
+							'Repetir nueva contraseña',
+							this.updateUserPassword
+						)
 				}
 			]
 		};
@@ -65,7 +73,7 @@ export default class UpdateUserInfo extends Component {
 
 	updateUserEmail = async (newEmail, password) => {
 		const emailOld = this.props.userInfo.email;
-		if (emailOld != newEmail) {
+		if (emailOld != newEmail && password) {
 			this.state.updateUserEmail(newEmail, password);
 		}
 		this.setState({ overlayComponent: null });
@@ -81,6 +89,42 @@ export default class UpdateUserInfo extends Component {
 					updateFunction={updateFunction}
 					inputValueOne={inputValueOne}
 					inputValueTwo=""
+					isPassword={true}
+					updateFunction={updateFunction}
+				/>
+			)
+		});
+	};
+
+	updateUserPassword = async (currentPassword, newPassword, repeatNewPassword) => {
+		if (currentPassword && newPassword && repeatNewPassword) {
+			if (newPassword === repeatNewPassword) {
+				if (currentPassword === newPassword) {
+					this.refs.toast.show('La nueva contraseña no debe ser igual a la actual', 1500);
+				} else {
+					this.state.updateUserPassword(currentPassword, newPassword);
+				}
+			} else {
+				this.refs.toast.show('La nuevas contraseñas tienen que ser iguales', 1500);
+			}
+		} else {
+			this.refs.toast.show('Tienes que ingresar todos los campos', 1500);
+		}
+		this.setState({
+			overlayComponent: null
+		});
+	};
+	openOverlayThreeInputs = (placeholderOne, placeholderTwo, placeholderThree, updateFunction) => {
+		this.setState({
+			overlayComponent: (
+				<OverLayThreeInput
+					isVisibleOverlay={true}
+					placeholderOne={placeholderOne}
+					placeholderTwo={placeholderTwo}
+					placeholderThree={placeholderThree}
+					inputValueOne=""
+					inputValueTwo=""
+					inputValueThree=""
 					isPassword={true}
 					updateFunction={updateFunction}
 				/>
@@ -111,6 +155,16 @@ export default class UpdateUserInfo extends Component {
 					/>
 				))}
 				{overlayComponent}
+				<Toast
+					ref="toast"
+					position="center"
+					fadeOutDuration={1000}
+					opacity={0.8}
+					positionValue={0}
+					fadeInDuration={1000}
+					fadeOutDuration={1000}
+					textStyle={{ color: '#fff' }}
+				/>
 			</View>
 		);
 	}

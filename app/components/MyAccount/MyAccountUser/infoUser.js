@@ -4,7 +4,8 @@ import { Avatar } from 'react-native-elements';
 import * as firebase from 'firebase';
 import UpdateUserInfo from './UpdateUserInfo';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import { ImagePicker, Permissions } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
 
 export default class infoUser extends Component {
 	constructor(props) {
@@ -17,10 +18,11 @@ export default class infoUser extends Component {
 	componentDidMount = () => {
 		this.getUserInfo();
 	};
-	getUserInfo = async () => {
+
+	getUserInfo = () => {
 		const user = firebase.auth().currentUser;
 
-		await user.providerData.forEach((userInfo) => {
+		user.providerData.forEach((userInfo) => {
 			this.setState({
 				userInfo
 			});
@@ -44,7 +46,22 @@ export default class infoUser extends Component {
 
 		this.getUserInfo();
 	};
+	updateUserPassword = async (currentPassword, newPassword) => {
+		this.reautenticate(currentPassword)
+			.then(() => {
+				const user = firebase.auth().currentUser;
 
+				user
+					.updatePassword(newPassword)
+					.then(() => {
+						this.refs.toast.show('Contraseña cambiada correctamete, vuelve a iniciar sesión', 50, () => {
+							firebase.auth().signOut();
+						});
+					})
+					.catch(() => this.refs.toast.show('Error intente mas tarde', 1500));
+			})
+			.catch(() => this.refs.toast.show('Tu contraseña es incorrecta', 1500));
+	};
 	updateUserPhotoURL = async (photoUri) => {
 		const update = { photoURL: photoUri };
 
@@ -60,6 +77,7 @@ export default class infoUser extends Component {
 					userInfo={this.state.userInfo}
 					updateUserDisplayName={this.updateUserDisplayName}
 					updateUserEmail={this.updateUserEmail}
+					updateUserPassword={this.updateUserPassword}
 				/>
 			);
 		}
@@ -86,7 +104,6 @@ export default class infoUser extends Component {
 	changeAvatarUser = async () => {
 		const resultPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
-		console.log(resultPermission);
 		if (resultPermission.status === 'denied') {
 			this.refs.toast.show('Es necesario aceptar los permisos para realixar esta accion', 1500);
 		} else {
@@ -104,8 +121,8 @@ export default class infoUser extends Component {
 							.ref('avatar/' + uid)
 							.getDownloadURL()
 							.then((resolve) => {
-								//this.updateUserPhotoURL(resolve);
-								console.log(resolve);
+								this.updateUserPhotoURL(resolve);
+								//console.log(resolve);
 							})
 							.catch((error) => {
 								this.refs.toast.show('Error al recuperar el avatar del servidor', 1500);
@@ -139,7 +156,7 @@ export default class infoUser extends Component {
 			});
 	};
 	render() {
-		const { displayName, email, photoUrl } = this.state.userInfo;
+		const { displayName, email, photoURL } = this.state.userInfo;
 		return (
 			<View>
 				<View style={styles.viewUserInfo}>
@@ -147,7 +164,7 @@ export default class infoUser extends Component {
 						rounded
 						size="large"
 						source={{
-							uri: this.checkUserAvatar(photoUrl)
+							uri: this.checkUserAvatar(photoURL)
 						}}
 						containerStyle={styles.userInfoAvatar}
 						showEditButton

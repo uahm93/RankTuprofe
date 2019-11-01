@@ -14,10 +14,15 @@ export default class MyAccountOwn extends Component {
 	render() {
 		const { goToScreen } = this.props;
 		return (
-			<View>
+			<View style={styles.userAccountView}>
 				<InfoUser />
 				<View style={styles.viewBody}>
-					<Button title="Cerrar sesión" onPress={() => this.logout()} />
+					<Button
+						buttonStyle={styles.boton}
+						titleStyle={styles.titulo}
+						title="Cerrar sesión"
+						onPress={() => this.logout()}
+					/>
 				</View>
 			</View>
 		);
@@ -28,6 +33,22 @@ const styles = StyleSheet.create({
 		height: 300,
 		marginBottom: 40
 	},
+	userAccountView: {
+		height: '100%',
+		backgroundColor: '#f2f2f2'
+	},
+	boton: {
+		marginTop: 30,
+		borderRadius: 0,
+		backgroundColor: '#fff',
+		borderTopWidth: 1,
+		borderTopColor: '#e3e3e3',
+		borderBottomWidth: 1,
+		borderBottomColor: '#e3e3e3',
+		paddingTop: 10,
+		paddingBottom: 10
+	},
+	titulo: { color: '#00a680' },
 	title: {
 		fontWeight: 'bold',
 		fontSize: 19,
