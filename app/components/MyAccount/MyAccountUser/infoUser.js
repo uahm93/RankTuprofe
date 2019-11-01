@@ -104,8 +104,8 @@ export default class infoUser extends Component {
 							.ref('avatar/' + uid)
 							.getDownloadURL()
 							.then((resolve) => {
-								this.updateUserPhotoURL(resolve);
-								//console.log(resolve);
+								//this.updateUserPhotoURL(resolve);
+								console.log(resolve);
 							})
 							.catch((error) => {
 								this.refs.toast.show('Error al recuperar el avatar del servidor', 1500);
