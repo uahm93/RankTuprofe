@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import { createStackNavigator, createAppContainer, createBottomTabNavigator } from 'react-navigation';
 
 //Pantallas
-import HomeScreen from '../screens/Home';
+
 import TopFiveScreen from '../screens/TopFive';
 import SearchScreen from '../screens/Search';
 
@@ -13,11 +13,21 @@ import MyaccountScreen from '../screens/MyAccount/MyAccount';
 import RegisterScreen from '../screens/MyAccount/Register';
 import LoginScreen from '../screens/MyAccount/Login';
 
+//Screns nuevo
+import HomeScreen from '../screens/Maestros/Home';
+import AddNuevoScreen from '../screens/Maestros/Addnuevo';
+
 const homeScreenStack = createStackNavigator({
 	Home: {
 		screen: HomeScreen,
 		navigationOptions: ({ navigation }) => ({
 			title: 'Home'
+		})
+	},
+	AddNuevo: {
+		screen: AddNuevoScreen,
+		navigationOptions: ({ navigation }) => ({
+			title: 'Nuevo restaurante'
 		})
 	}
 });

@@ -5,6 +5,9 @@ import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class Home extends Component {
+	goToScreen = (nameScreen) => {
+		this.props.navigation.navigate(nameScreen);
+	};
 	render() {
 		return (
 			<View style={styles.viewBody}>
@@ -12,7 +15,7 @@ export default class Home extends Component {
 				<ActionButton
 					buttonColor="#00a68a"
 					onPress={() => {
-						console.log('Open app restaurante');
+						this.goToScreen('AddNuevo');
 					}}
 				/>
 			</View>
