@@ -26,7 +26,7 @@ export default class AddNuevo extends Component {
 
 	isImage = (image) => {
 		if (image) {
-			return <Image source={{ uri: image }} style={{ width: 500, height: 200 }} source={{ uri: imageUri }} />;
+			return <Image source={{ uri: image }} style={{ width: 500, height: 200 }} />;
 		} else {
 			return <Image source={require('../../../assets/img/no-image.png')} style={{ width: 200, height: 200 }} />;
 		}
