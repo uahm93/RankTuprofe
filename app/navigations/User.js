@@ -27,7 +27,7 @@ const homeScreenStack = createStackNavigator({
 	AddNuevo: {
 		screen: AddNuevoScreen,
 		navigationOptions: ({ navigation }) => ({
-			title: 'Nuevo restaurante'
+			title: 'Nuevo Docente'
 		})
 	}
 });
