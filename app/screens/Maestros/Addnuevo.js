@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Icon, Image, Button } from 'react-native-elements';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Icon, Image, Button, Text, Overlay } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Toast, { DURATION } from 'react-native-easy-toast';
@@ -22,10 +22,12 @@ export default class AddNuevo extends Component {
 		super();
 		this.state = {
 			imageUri: '',
+			loading: false,
 			formData: {
 				name: '',
 				city: '',
 				school: '',
+				facultad: '',
 				description: ''
 			}
 		};
@@ -62,47 +64,51 @@ export default class AddNuevo extends Component {
 	};
 	addDocente = () => {
 		const { imageUri } = this.state;
-		const { name, city, school, addDocente, description } = this.state.formData;
+		const { name, city, school, facultad, description } = this.state.formData;
 
 		if (imageUri && name && school && city && description) {
-			const data = {
-				name,
-				city,
-				school,
-				description,
-				image: ''
-			};
+			this.setState({
+				loading: true
+			});
+
 			db
-				.collection('Docentes')
-				.add({ data })
+				.collection('FotosDocentes')
+				.add({ name, city, school, facultad, description, image: '', createat: new Date() })
 				.then((resolve) => {
 					const docenteId = resolve.id;
 
 					uploadImage(imageUri, docenteId, 'FotosDocentes')
 						.then((resolve) => {
 							const docenteRef = db.collection('FotosDocentes').doc(docenteId);
+
 							docenteRef
 								.update({ image: resolve })
 								.then(() => {
-									this.refs.toast.show('Docente creado correctamente', 1500);
+									this.refs.toast.show('Docente agregado correctamente', 500, () => {
+										this.props.navigation.goBack();
+									});
+									this.setState({ loading: false });
 								})
 								.catch((err) => {
-									this.refs.toast.show('Error de servidor intente mas tarde', 1500);
+									this.refs.toast.show('Error al guardar datos, intente mas tarde', 1500);
+									this.setState({ loading: false });
 								});
 						})
 						.catch((err) => {
 							this.refs.toast.show('Error de servidor intente mas tarde', 1500);
+							this.setState({ loading: false });
 						});
 				})
-				.then(() => {
-					this.refs.toast.show('Error de servidor intente mas tarde', 1500);
+				.catch(() => {
+					this.refs.toast.show('Falla de servidor favor de intentar mas tarde', 1500);
+					this.setState({ loading: false });
 				});
 		} else {
 			this.refs.toast.show('Tienes que llenar todos los campos', 1500);
 		}
 	};
 	render() {
-		const { imageUri } = this.state;
+		const { imageUri, loading } = this.state;
 		return (
 			<View style={styles.viewBody}>
 				<View style={styles.viewPhoto}>{this.isImage(imageUri)}</View>
@@ -140,6 +146,12 @@ export default class AddNuevo extends Component {
 					fadeInDuration={1000}
 					textStyle={{ color: '#fff' }}
 				/>
+				<View>
+					<Overlay overlayStyle={styles.overlayLoading} isVisible={loading}>
+						<Text style={styles.overlaText}>Añadiendo docente</Text>
+						<ActivityIndicator size="large" color="#00a68a0" />
+					</Overlay>
+				</View>
 			</View>
 		);
 	}
@@ -171,5 +183,12 @@ const styles = StyleSheet.create({
 	botonAddNuevo: {
 		backgroundColor: '#00A680',
 		margin: 20
+	},
+	overlayLoading: {
+		padding: 20
+	},
+	overlaText: {
+		marginBottom: 20,
+		fontSize: 20
 	}
 });

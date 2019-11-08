@@ -18,13 +18,13 @@ export default (Textarea = (locals) => {
 const styles = StyleSheet.create({
 	viewContainer: {
 		margin: 12,
-		height: 100,
+		height: 50,
 		width: '100%',
 		marginRight: 13
 	},
 	inputContainer: {
 		position: 'absolute',
-		height: 100,
+		height: 50,
 		padding: 0,
 		margin: 0,
 		width: '100%'

@@ -6,6 +6,7 @@ export const AddNuevoStruct = t.struct({
 	name: t.String,
 	city: t.String,
 	school: t.String,
+	facultad: t.String,
 	description: t.String
 });
 
@@ -30,7 +31,15 @@ export const addNuevoOptions = {
 		school: {
 			template: inputTemplate,
 			config: {
-				placeholder: 'Nombre de Colegio',
+				placeholder: 'Escuela',
+				iconType: 'material-community',
+				iconName: 'school'
+			}
+		},
+		facultad: {
+			template: inputTemplate,
+			config: {
+				placeholder: 'Facultad',
 				iconType: 'material-community',
 				iconName: 'school'
 			}
