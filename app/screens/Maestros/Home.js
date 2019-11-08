@@ -3,17 +3,23 @@ import { StyleSheet, View, Text } from 'react-native';
 import { white } from 'ansi-colors';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as firebase from 'firebase';
-
+import { firebaseApp } from '../../utils/Firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+const db = firebase.firestore(firebaseApp);
 export default class Home extends Component {
 	constructor() {
 		super();
 		this.state = {
-			login: false
+			login: false,
+			docente: null,
+			startDocente: null,
+			limitDocente: 8
 		};
 	}
 	componentDidMount() {
 		this.checkLogin();
+		this.loadDocentes();
 	}
 	checkLogin = () => {
 		firebase.auth().onAuthStateChanged((user) => {
@@ -30,6 +36,22 @@ export default class Home extends Component {
 	};
 	goToScreen = (nameScreen) => {
 		this.props.navigation.navigate(nameScreen);
+	};
+	loadDocentes = async () => {
+		const limitDocente = this.state;
+		let resultDocente = [];
+
+		const docentes = db.collection('Docentes').orderBy('createat', 'desc').limt(limitDocente);
+
+		await docentes.get().then((response) => {
+			this.setState({
+				startDocente: response.docs[response.docs.length - 1]
+			});
+			// response.forEach((element) => {
+			// 	console.log(element);
+			// });
+			console.log(response);
+		});
 	};
 	render() {
 		const { login } = this.state;

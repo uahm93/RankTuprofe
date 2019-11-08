@@ -72,14 +72,14 @@ export default class AddNuevo extends Component {
 			});
 
 			db
-				.collection('FotosDocentes')
+				.collection('Docentes')
 				.add({ name, city, school, facultad, description, image: '', createat: new Date() })
 				.then((resolve) => {
 					const docenteId = resolve.id;
 
-					uploadImage(imageUri, docenteId, 'FotosDocentes')
+					uploadImage(imageUri, docenteId, 'Docentes')
 						.then((resolve) => {
-							const docenteRef = db.collection('FotosDocentes').doc(docenteId);
+							const docenteRef = db.collection('Docentes').doc(docenteId);
 
 							docenteRef
 								.update({ image: resolve })
