@@ -147,7 +147,7 @@ export default class AddNuevo extends Component {
 					textStyle={{ color: '#fff' }}
 				/>
 				<View>
-					<Overlay overlayStyle={styles.overlayLoading} isVisible={loading}>
+					<Overlay overlayStyle={styles.overlayLoading} isVisible={loading} width="auto" height="auto">
 						<Text style={styles.overlaText}>Añadiendo docente</Text>
 						<ActivityIndicator size="large" color="#00a68a0" />
 					</Overlay>
