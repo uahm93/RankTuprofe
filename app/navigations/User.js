@@ -17,6 +17,8 @@ import LoginScreen from '../screens/MyAccount/Login';
 import HomeScreen from '../screens/Maestros/Home';
 import AddNuevoScreen from '../screens/Maestros/Addnuevo';
 
+import DocenteScreen from '../screens/Maestros/Docente'
+
 const homeScreenStack = createStackNavigator({
 	Home: {
 		screen: HomeScreen,
@@ -29,6 +31,12 @@ const homeScreenStack = createStackNavigator({
 		navigationOptions: ({ navigation }) => ({
 			title: 'Nuevo Docente'
 		})
+	},
+	Docente: {
+		screen: DocenteScreen,
+		navigationOptions: ({ navigation }) => ({ 
+              title: navigation.state.params.docente.item.docente.name  
+			})
 	}
 });
 

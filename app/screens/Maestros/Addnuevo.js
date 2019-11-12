@@ -18,8 +18,9 @@ import 'firebase/firestore';
 const db = firebase.firestore(firebaseApp);
 
 export default class AddNuevo extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+
 		this.state = {
 			imageUri: '',
 			loading: false,
@@ -85,6 +86,7 @@ export default class AddNuevo extends Component {
 								.update({ image: resolve })
 								.then(() => {
 									this.refs.toast.show('Docente agregado correctamente', 500, () => {
+										this.props.navigation.state.params.loadDocentes();
 										this.props.navigation.goBack();
 									});
 									this.setState({ loading: false });

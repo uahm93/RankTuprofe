@@ -37,9 +37,7 @@ export default class Home extends Component {
 			}
 		});
 	};
-	goToScreen = (nameScreen) => {
-		this.props.navigation.navigate(nameScreen);
-	};
+	
 	loadDocentes = async () => {
 		const limitDocente = this.state;
 		let resultDocente = [];
@@ -59,36 +57,39 @@ export default class Home extends Component {
 		this.setState({
 			docente: resultDocente
 		});
-	};
+	}; 
 
 	handleLoadMore = async () => {
-		const { docente, limitDocente, startDocente } = this.state;
+		const { limitDocente, startDocente } = this.state;
 		let resulDocentes = [];
+		this.state.docente.forEach(doc => {
+			resulDocentes.push(doc); 
+		})
 		const docentesDB = db
 			.collection('Docentes')
 			.orderBy('createat', 'desc')
 			.startAfter(startDocente.data().createat)
 			.limit(8);
 
-		// await docentesDB.get().then((response) => {
-		// 	if (response.docs.length > 0) {
-		// 		this.setState({
-		// 			startDocente: response.doc(response.docs.length - 1)
-		// 		});
-		// 	} else {
-		// 		this.setState({
-		// 			isLoading: false
-		// 		});
-		// 	}
-		// 	response.forEach((doc) => {
-		// 		let docente = doc.data();
-		// 		docente.id = doc.id;
-		// 		resulDocentes.push({ docente });
-		// 	});
-		// 	this.setState({
-		// 		docente: resulDocentes
-		// 	});
-		// });
+		 await docentesDB.get().then((response) => {
+		 	if (response.docs.length > 0) {
+		 		this.setState({
+		 			startDocente: response.docs[response.docs.length - 1] 
+		 		});
+		 	} else {
+		 		this.setState({
+		 			isLoading: false
+		 		});
+		 	}
+		 	response.forEach((doc) => {
+		 		let docente = doc.data();
+		 		docente.id = doc.id;
+		 		resulDocentes.push({ docente });
+		 	});
+		 	this.setState({
+		 		docente: resulDocentes 
+		 	});
+		 });
 	};
 
 	renderFooter = () => {
@@ -147,8 +148,7 @@ export default class Home extends Component {
 	};
 
 	clickDocente = (docente) => {
-		console.log('haz dado click en ');
-		console.log(docente);
+		this.props.navigation.navigate("Docente", { docente });
 	};
 
 	render() {
@@ -160,7 +160,7 @@ export default class Home extends Component {
 					<ActionButton
 						buttonColor="#00a68a"
 						onPress={() => {
-							this.goToScreen('AddNuevo');
+							this.props.navigation.navigate("AddNuevo", {loadDocentes: this.loadDocentes});
 						}}
 					/>
 				) : null}
