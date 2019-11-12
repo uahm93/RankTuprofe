@@ -19,6 +19,8 @@ import AddNuevoScreen from '../screens/Maestros/Addnuevo';
 
 import DocenteScreen from '../screens/Maestros/Docente'
 
+import AddReviewScreen from '../screens/Maestros/AddReview'
+
 const homeScreenStack = createStackNavigator({
 	Home: {
 		screen: HomeScreen,
@@ -37,7 +39,14 @@ const homeScreenStack = createStackNavigator({
 		navigationOptions: ({ navigation }) => ({ 
               title: navigation.state.params.docente.item.docente.name  
 			})
+	},
+	AddReview: {
+		screen: AddReviewScreen,
+		navigationOptions: ({ navigation }) => ({ 
+              title: navigation.state.params.name  
+			})
 	}
+
 });
 
 const TopFiveScreenStack = createStackNavigator({
