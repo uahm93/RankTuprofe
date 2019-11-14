@@ -33,6 +33,7 @@ export default class AddReview extends Component {
 			});
 		} else {
 			const validate = this.refs.addReviewForm.getValue();
+			console.log(validate);
 			if (!validate) {
 				this.refs.toast.show('Completa el formuario', 1500);
 				this.setState({ loading: false });
@@ -42,12 +43,13 @@ export default class AddReview extends Component {
 				const data = {
 					idUser: user.uid,
 					idDocente: this.props.navigation.state.params.id,
-					title: validate.title,
+					title: validate.titulo,
 					review: validate.review,
 					rating: ratingValue,
 					createat: new Date()
 				};
- 
+
+				console.log(data);
 				db
 					.collection('Reviews')
 					.add(data)
