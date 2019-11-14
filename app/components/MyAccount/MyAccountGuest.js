@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	},
 
 	btnStyle: {
-		backgroundColor: '#00a680',
+		backgroundColor: '#BB0000',
 		width: '100%'
 	}
 });

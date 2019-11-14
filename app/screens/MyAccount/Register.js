@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
 		marginRight: 40
 	},
 	buttonRegisterContainer: {
-		backgroundColor: '#00a680',
+		backgroundColor: '#BB0000',
 		marginTop: 20,
 		marginLeft: 10,
 		marginRight: 10

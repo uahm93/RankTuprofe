@@ -131,7 +131,7 @@ const RootStack = createBottomTabNavigator(
 		initialRouteName: 'Home',
 		tabBarOptions: {
 			inactiveTintColor: '#412f55',
-			activeTintColor: '#00a680'
+			activeTintColor: '#BB0000'
 		}
 	}
 );

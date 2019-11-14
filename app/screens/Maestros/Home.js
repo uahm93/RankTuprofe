@@ -37,7 +37,7 @@ export default class Home extends Component {
 			}
 		});
 	};
-	
+
 	loadDocentes = async () => {
 		const limitDocente = this.state;
 		let resultDocente = [];
@@ -57,39 +57,39 @@ export default class Home extends Component {
 		this.setState({
 			docente: resultDocente
 		});
-	}; 
+	};
 
 	handleLoadMore = async () => {
 		const { limitDocente, startDocente } = this.state;
 		let resulDocentes = [];
-		this.state.docente.forEach(doc => {
-			resulDocentes.push(doc); 
-		})
+		this.state.docente.forEach((doc) => {
+			resulDocentes.push(doc);
+		});
 		const docentesDB = db
 			.collection('Docentes')
 			.orderBy('createat', 'desc')
 			.startAfter(startDocente.data().createat)
 			.limit(8);
 
-		 await docentesDB.get().then((response) => {
-		 	if (response.docs.length > 0) {
-		 		this.setState({
-		 			startDocente: response.docs[response.docs.length - 1] 
-		 		});
-		 	} else {
-		 		this.setState({
-		 			isLoading: false
-		 		});
-		 	}
-		 	response.forEach((doc) => {
-		 		let docente = doc.data();
-		 		docente.id = doc.id;
-		 		resulDocentes.push({ docente });
-		 	});
-		 	this.setState({
-		 		docente: resulDocentes 
-		 	});
-		 });
+		await docentesDB.get().then((response) => {
+			if (response.docs.length > 0) {
+				this.setState({
+					startDocente: response.docs[response.docs.length - 1]
+				});
+			} else {
+				this.setState({
+					isLoading: false
+				});
+			}
+			response.forEach((doc) => {
+				let docente = doc.data();
+				docente.id = doc.id;
+				resulDocentes.push({ docente });
+			});
+			this.setState({
+				docente: resulDocentes
+			});
+		});
 	};
 
 	renderFooter = () => {
@@ -148,7 +148,7 @@ export default class Home extends Component {
 	};
 
 	clickDocente = (docente) => {
-		this.props.navigation.navigate("Docente", { docente });
+		this.props.navigation.navigate('Docente', { docente });
 	};
 
 	render() {
@@ -160,7 +160,7 @@ export default class Home extends Component {
 					<ActionButton
 						buttonColor="#00a68a"
 						onPress={() => {
-							this.props.navigation.navigate("AddNuevo", {loadDocentes: this.loadDocentes});
+							this.props.navigation.navigate('AddNuevo', { loadDocentes: this.loadDocentes });
 						}}
 					/>
 				) : null}

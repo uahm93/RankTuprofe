@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20
 	},
 	buttonUpdate: {
-		backgroundColor: '#00A680'
+		backgroundColor: '#BB0000'
 	},
 	containerIconClose: {
 		position: 'absolute',

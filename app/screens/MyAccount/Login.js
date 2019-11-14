@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   buttonLoginContainer: {
-    backgroundColor: "#00a680",
+    backgroundColor: "#BB0000",
     marginTop: 20,
     marginLeft: 10,
     marginRight: 10
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginTop: -20,
-    backgroundColor: "#00a680",
+    backgroundColor: "#BB0000",
     marginBottom: 10
   },
   textRegister: {
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   btnRegistrate: {
-    color: "#00a680",
+    color: "#BB0000",
     fontWeight: "bold"
   }
 });

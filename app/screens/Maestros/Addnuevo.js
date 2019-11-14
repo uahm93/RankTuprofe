@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end'
 	},
 	botonAddNuevo: {
-		backgroundColor: '#00A680',
+		backgroundColor: '#BB0000',
 		margin: 20
 	},
 	overlayLoading: {

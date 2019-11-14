@@ -98,6 +98,6 @@ const styles = StyleSheet.create({
 
 	},
 	btnAddReview: {
-		backgroundColor: "#00a680"
+		backgroundColor: "#BB0000"
 	}
 }) 

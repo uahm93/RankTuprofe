@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 10
 	},
-	titulo: { color: '#00a680' },
+	titulo: { color: '#BB0000' },
 	title: {
 		fontWeight: 'bold',
 		fontSize: 19,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 	},
 
 	btnStyle: {
-		backgroundColor: '#00a680',
+		backgroundColor: '#BB0000',
 		width: '100%'
 	}
 });
