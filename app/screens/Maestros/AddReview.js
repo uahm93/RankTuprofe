@@ -22,6 +22,9 @@ export default class AddReview extends Component {
 
 	sendReview = () => {
 		const ratingValue = this.refs.rating.state.position;
+		const user = firebase.auth().currentUser;
+
+
 		this.setState({
 			loading: true
 		});
@@ -38,10 +41,11 @@ export default class AddReview extends Component {
 				this.refs.toast.show('Completa el formuario', 1500);
 				this.setState({ loading: false });
 			} else {
-				const user = firebase.auth().currentUser;
+				//const user = firebase.auth().currentUser;
 
 				const data = {
 					idUser: user.uid,
+					avatarUser: user.photoURL,
 					idDocente: this.props.navigation.state.params.id,
 					title: validate.titulo,
 					review: validate.review,
@@ -49,7 +53,6 @@ export default class AddReview extends Component {
 					createat: new Date()
 				};
 
-				console.log(data);
 				db
 					.collection('Reviews')
 					.add(data)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, FlatList } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, ActivityIndicator, FlatList } from 'react-native';
 import { Image, Icon, ListItem, Button, Rating, Avatar } from 'react-native-elements';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import { firebaseApp } from '../../utils/Firebase';
@@ -15,8 +15,8 @@ export default class Docente extends Component {
 		this.state = {
 			reviews: null,
 			startReview: null,
-			limitReview: 5,
-			isLoading: true
+			isLoading: true,
+			rating: 0
 		}
 	}
 
@@ -91,12 +91,12 @@ export default class Docente extends Component {
 	}
 
 	loadReview = async () => {
-       const {limitReview} = this.state;
        const {id} = this.props.navigation.state.params.docente.item.docente;
 
        let resultReviews = [];
+       let arrayRating = [];
 
-       const reviews = db.collection('Reviews').where("idDocente", "==", id).limit(limitReview);
+       const reviews = db.collection('Reviews').where("idDocente", "==", id);
 
        return await reviews.get().then(response => {
        	this.setState({
@@ -105,9 +105,24 @@ export default class Docente extends Component {
        	response.forEach(doc=> {
        		let review = doc.data();
        		resultReviews.push(review);
+       		arrayRating.push(doc.data().rating);
        	})
+
+        let sum = 0;
+
+        arrayRating.map(value => {
+        	sum = sum + value;
+        })
+
+        const countRating = arrayRating.length;
+
+        const media = sum / countRating; 
+
+        const resultRatingFinish = media ? media : 0;
+
        	this.setState({
-       		reviews: resultReviews
+       		reviews: resultReviews,
+       		rating: resultRatingFinish
        	})
        	
        })
@@ -115,10 +130,45 @@ export default class Docente extends Component {
 
     renderFlatList = (reviews) => {
      if(reviews){
-     	<Text>Lista</Text>
+     	return (
+     		 <FlatList 
+     		   data={reviews} 
+     		   renderItem={this.renderRow} 
+     		   key={(item, index) => index.toString()} 
+     		   onEndReachedThereshold={0}
+     		   />
+     		);
      }else{
-     	return (<View style={styles.loadReviews}></View>)
-     }
+     	return (<View style={styles.loadReviews}>
+     		     <ActivityIndicator size="large"/>
+     		     <Text>Cargando comentarios</Text>
+     		    </View>)
+      } 
+    }
+    renderRow = (reviewData) => {
+      const { title, review, rating, idUser, createat, avatarUser } = reviewData.item; 
+      const createReview = new Date(createat.seconds * 1000);
+      console.log(reviewData);
+
+      const avatar = avatarUser ? avatarUser : "https://api.adorable.io/avatars/169/abott@adorable.png";
+
+      return (<View style={styles.ViewReview}>
+		      	<View style={styles.ViewImage}>
+		      	<Avatar source={{uri: avatarUser }} 
+		      	size="large"
+		      	rounded
+		      	containerStyle={styles.imageAvatarStyle}
+		      	/>
+		      	</View>
+		      	<View style={styles.viewInfo}>
+                   <Text style={styles.reviewTitle}>{title}</Text>
+                   <Text style={styles.reviewText}>{review}</Text>
+                   <Rating imageSize={15} startingValue={rating} />
+                   <Text style={styles.reviewDate}>
+                   {createReview.getDate()}/{createReview.getMonth() + 1}/{createReview.getFullYear()}
+                   </Text>
+		      	</View>
+      	      </View>)
     }
 	render() {  
 		const {
@@ -130,7 +180,7 @@ export default class Docente extends Component {
 			facultad,
 			description
 		} = this.props.navigation.state.params.docente.item.docente;
-		const {reviews} = this.state;
+		const {reviews, rating} = this.state;
 		const listExtraInfo = [ 
 			{
 				text: `${city},${school},${facultad}`,
@@ -140,7 +190,7 @@ export default class Docente extends Component {
 			}
 		];
 		return (
-			<View style={styles.viewBody}>
+			<ScrollView style={styles.viewBody}>
 				<View style={styles.viewImage}>
 					<Image
 						source={{ uri: image }}
@@ -149,7 +199,11 @@ export default class Docente extends Component {
 					/>
 				</View>
 				<View style={styles.viewDocenteInfo}>
-					<Text style={styles.nameDocente}>{name}</Text>
+				    <View style={{ flexDirection: "row"}}>
+				    	<Text style={styles.nameDocente}>{name}</Text>
+				    	<Rating  style={{ position: "absolute", right: 0}} imageSize={20} readOnly startingValue={parseFloat(rating)} />
+				    </View>
+					
 					<Text style={styles.descriptionDocente}>{description}</Text>
 				</View>
 				<View style={styles.ViewDocenteInfoExtra}>
@@ -165,9 +219,10 @@ export default class Docente extends Component {
 				<View style={styles.boton}>
 				{this.loadButtonAddReview()}					
 				</View>
+				<Text style={styles.revieHead}>Opiniones</Text>
 				{this.renderFlatList(reviews)}
 				<Toast ref="toast" position ="bottom" positionValue={320} fadeInDuration={1000} fadeOutDuration={1000} opacity={0.8} textStyle={{color: "#FFF" }} />
-			</View>
+			</ScrollView>
 		); 
 	}
 }
@@ -200,7 +255,7 @@ const styles = StyleSheet.create({
 		marginTop: 25
 	},
 	title: {
-		fontSize: 10,
+		fontSize: 20,
 		fontWeight: 'bold',
 		marginBottom: 10
 	},
@@ -216,6 +271,46 @@ const styles = StyleSheet.create({
 	},
 	loadReviews: {
 		marginTop: 20,
-		alignItem: "Center"
-	}
+		alignItems: "center"
+	},
+	ViewReview: {
+		flexDirection: "row",
+		margin: 10,
+		paddingBottom: 20,
+		borderBottomColor: "#BB0000",
+		borderBottomWidth: 1
+	},
+	ViewImage: {
+		marginRight:15,
+	},
+	imageAvatarStyle:{
+		width: 50,
+		height: 50,
+	},
+	viewInfo: {
+		flex: 1,
+		alignItems: "flex-start"
+	},
+	reviewTitle:{
+		fontWeight: "bold"
+	},
+	reviewText: {
+		paddingTop: 2,
+		color: "grey",
+		marginBottom: 5
+	},
+	reviewDate: {
+		marginTop: 5,
+		color: "grey",
+		fontSize: 12
+
+	},
+	revieHead: {
+		fontSize: 20,
+		textAlign: "center",
+		fontWeight: "bold",
+		marginTop: 20,
+		marginBottom: 10
+	},
 });
+
