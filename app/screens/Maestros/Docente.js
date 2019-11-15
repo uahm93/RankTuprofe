@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView, Text, ActivityIndicator, FlatList } from 'react-native';
 import { Image, Icon, ListItem, Button, Rating, Avatar } from 'react-native-elements';
-import Toast, {DURATION} from 'react-native-easy-toast';
+import Toast, { DURATION } from 'react-native-easy-toast';
 import { firebaseApp } from '../../utils/Firebase';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -17,13 +17,13 @@ export default class Docente extends Component {
 			startReview: null,
 			isLoading: true,
 			rating: 0
-		}
+		};
 	}
 
-	componentDidMount(){
+	componentDidMount() {
 		this.loadReview();
 	}
-    
+
 	checkUserLogin = () => {
 		const user = firebase.auth().currentUser;
 		if (user) {
@@ -33,146 +33,144 @@ export default class Docente extends Component {
 	};
 
 	loadButtonAddReview = () => {
-        if(!this.checkUserLogin()){ 
-        	return (<Text>Para escribir una opinión debes iniciar sesión{" "}
-        	<Text style={styles.botonlogin} onPress={() => this.props.navigation.navigate("Login")}>Aqui</Text> </Text>);
-        }else{
-        	return (<Button
-						title="Agregar comentario"
-						onPress={() => this.goToScreenAddReview()}
-						buttonStyle={styles.btnAddReview}
-					/>);
-        }
-	}
-    
+		if (!this.checkUserLogin()) {
+			return (
+				<Text>
+					Para escribir una opinión debes iniciar sesión{' '}
+					<Text style={styles.botonlogin} onPress={() => this.props.navigation.navigate('Login')}>
+						Aqui
+					</Text>{' '}
+				</Text>
+			);
+		} else {
+			return (
+				<Button
+					title="Agregar comentario"
+					onPress={() => this.goToScreenAddReview()}
+					buttonStyle={styles.btnAddReview}
+				/>
+			);
+		}
+	};
 
 	checkAddReview = () => {
 		const user = firebase.auth().currentUser;
 		const idUSer = user.uid;
 		const idDocente = this.props.navigation.state.params.docente.item.docente.id;
-		
-		const reviewsRef = db.collection('Reviews');
-		const queryRef = reviewsRef
-		.where("idUser", "==", idUSer)
-		.where("idDocente", "==", idDocente);
 
-		return queryRef.get().then(resolve => {
+		const reviewsRef = db.collection('Reviews');
+		const queryRef = reviewsRef.where('idUser', '==', idUSer).where('idDocente', '==', idDocente);
+
+		return queryRef.get().then((resolve) => {
 			const countReview = resolve.size;
-			if(countReview > 0){
-              return true;
-			}else{
+			if (countReview > 0) {
+				return true;
+			} else {
 				return false;
 			}
-		})
+		});
+	};
+	goToScreenAddReview = () => {
+		const { id, name } = this.props.navigation.state.params.docente.item.docente;
 
-	}
-	goToScreenAddReview = ()  => {
+		this.checkAddReview().then((resolve) => {
+			if (resolve) {
+				this.refs.toast.show('Ya haz enviado un comentario de este docente, no puedes enviar mas', 2000);
+			} else {
+				const { id, name } = this.props.navigation.state.params.docente.item.docente;
 
-        const {
-			id,
-			name 
-		} = this.props.navigation.state.params.docente.item.docente;
-
-		 this.checkAddReview().then(resolve => {
-		 	
-		 	if(resolve){
-		 		this.refs.toast.show("Ya haz enviado un comentario de este docente, no puedes enviar mas", 2000);
-		 	}else {
-
-	 		const {
-				id,
-				name 
-   			} = this.props.navigation.state.params.docente.item.docente;
-
-			this.props.navigation.navigate('AddReview', { id, name });
-
-		 	}
-		 }) 
-	}
+				this.props.navigation.navigate('AddReview', { id, name, loadReview: this.loadReview });
+			}
+		});
+	};
 
 	loadReview = async () => {
-       const {id} = this.props.navigation.state.params.docente.item.docente;
+		const { id } = this.props.navigation.state.params.docente.item.docente;
 
-       let resultReviews = [];
-       let arrayRating = [];
+		let resultReviews = [];
+		let arrayRating = [];
 
-       const reviews = db.collection('Reviews').where("idDocente", "==", id);
+		const reviews = db.collection('Reviews').where('idDocente', '==', id);
 
-       return await reviews.get().then(response => {
-       	this.setState({
-       		startReview: response.docs[response.docs.length -1]
-       	})
-       	response.forEach(doc=> {
-       		let review = doc.data();
-       		resultReviews.push(review);
-       		arrayRating.push(doc.data().rating);
-       	})
+		return await reviews.get().then((response) => {
+			this.setState({
+				startReview: response.docs[response.docs.length - 1]
+			});
+			response.forEach((doc) => {
+				let review = doc.data();
+				resultReviews.push(review);
+				arrayRating.push(doc.data().rating);
+			});
 
-        let sum = 0;
+			let sum = 0;
 
-        arrayRating.map(value => {
-        	sum = sum + value;
-        })
+			arrayRating.map((value) => {
+				sum = sum + value;
+			});
 
-        const countRating = arrayRating.length;
+			const countRating = arrayRating.length;
 
-        const media = sum / countRating; 
+			const media = sum / countRating;
 
-        const resultRatingFinish = media ? media : 0;
+			const resultRatingFinish = media ? media : 0;
 
-       	this.setState({
-       		reviews: resultReviews,
-       		rating: resultRatingFinish
-       	})
-       	
-       })
-	}
+			this.setState({
+				reviews: resultReviews,
+				rating: resultRatingFinish
+			});
+		});
+	};
 
-    renderFlatList = (reviews) => {
-     if(reviews){
-     	return (
-     		 <FlatList 
-     		   data={reviews} 
-     		   renderItem={this.renderRow} 
-     		   key={(item, index) => index.toString()} 
-     		   onEndReachedThereshold={0}
-     		   />
-     		);
-     }else{
-     	return (<View style={styles.loadReviews}>
-     		     <ActivityIndicator size="large"/>
-     		     <Text>Cargando comentarios</Text>
-     		    </View>)
-      } 
-    }
-    renderRow = (reviewData) => {
-      const { title, review, rating, idUser, createat, avatarUser } = reviewData.item; 
-      const createReview = new Date(createat.seconds * 1000);
-      console.log(reviewData);
+	renderFlatList = (reviews) => {
+		if (reviews) {
+			return (
+				<FlatList
+					data={reviews}
+					renderItem={this.renderRow}
+					key={(item, index) => index.toString()}
+					onEndReachedThereshold={0}
+				/>
+			);
+		} else {
+			return (
+				<View style={styles.loadReviews}>
+					<ActivityIndicator size="large" />
+					<Text>Cargando comentarios</Text>
+				</View>
+			);
+		}
+	};
+	renderRow = (reviewData) => {
+		const { title, review, rating, idUser, createat, avatarUser } = reviewData.item;
+		const createReview = new Date(createat.seconds * 1000);
+		console.log(reviewData);
 
-      const avatar = avatarUser ? avatarUser : "https://api.adorable.io/avatars/169/abott@adorable.png";
+		const avatar = avatarUser ? avatarUser : 'https://api.adorable.io/avatars/169/abott@adorable.png';
 
-      return (<View style={styles.ViewReview}>
-		      	<View style={styles.ViewImage}>
-		      	<Avatar source={{uri: avatarUser }} 
-		      	size="large"
-		      	rounded
-		      	containerStyle={styles.imageAvatarStyle}
-		      	/>
-		      	</View>
-		      	<View style={styles.viewInfo}>
-                   <Text style={styles.reviewTitle}>{title}</Text>
-                   <Text style={styles.reviewText}>{review}</Text>
-                   <Rating imageSize={15} startingValue={rating} />
-                   <Text style={styles.reviewDate}>
-                   {createReview.getDate()}/{createReview.getMonth() + 1}/{createReview.getFullYear()}
-                   </Text>
-		      	</View>
-      	      </View>)
-    }
-	render() {  
+		return (
+			<View style={styles.ViewReview}>
+				<View style={styles.ViewImage}>
+					<Avatar
+						source={{ uri: avatarUser }}
+						size="large"
+						rounded
+						containerStyle={styles.imageAvatarStyle}
+					/>
+				</View>
+				<View style={styles.viewInfo}>
+					<Text style={styles.reviewTitle}>{title}</Text>
+					<Text style={styles.reviewText}>{review}</Text>
+					<Rating imageSize={15} startingValue={rating} />
+					<Text style={styles.reviewDate}>
+						{createReview.getDate()}/{createReview.getMonth() + 1}/{createReview.getFullYear()}
+					</Text>
+				</View>
+			</View>
+		);
+	};
+	render() {
 		const {
-			id, 
+			id,
 			name,
 			city,
 			school,
@@ -180,8 +178,8 @@ export default class Docente extends Component {
 			facultad,
 			description
 		} = this.props.navigation.state.params.docente.item.docente;
-		const {reviews, rating} = this.state;
-		const listExtraInfo = [ 
+		const { reviews, rating } = this.state;
+		const listExtraInfo = [
 			{
 				text: `${city},${school},${facultad}`,
 				iconName: 'map-marker',
@@ -199,11 +197,16 @@ export default class Docente extends Component {
 					/>
 				</View>
 				<View style={styles.viewDocenteInfo}>
-				    <View style={{ flexDirection: "row"}}>
-				    	<Text style={styles.nameDocente}>{name}</Text>
-				    	<Rating  style={{ position: "absolute", right: 0}} imageSize={20} readOnly startingValue={parseFloat(rating)} />
-				    </View>
-					
+					<View style={{ flexDirection: 'row' }}>
+						<Text style={styles.nameDocente}>{name}</Text>
+						<Rating
+							style={{ position: 'absolute', right: 0 }}
+							imageSize={25}
+							readOnly
+							startingValue={parseFloat(rating)}
+						/>
+					</View>
+
 					<Text style={styles.descriptionDocente}>{description}</Text>
 				</View>
 				<View style={styles.ViewDocenteInfoExtra}>
@@ -216,14 +219,20 @@ export default class Docente extends Component {
 						/>
 					))}
 				</View>
-				<View style={styles.boton}>
-				{this.loadButtonAddReview()}					
-				</View>
+				<View style={styles.boton}>{this.loadButtonAddReview()}</View>
 				<Text style={styles.revieHead}>Opiniones</Text>
 				{this.renderFlatList(reviews)}
-				<Toast ref="toast" position ="bottom" positionValue={320} fadeInDuration={1000} fadeOutDuration={1000} opacity={0.8} textStyle={{color: "#FFF" }} />
+				<Toast
+					ref="toast"
+					position="bottom"
+					positionValue={320}
+					fadeInDuration={1000}
+					fadeOutDuration={1000}
+					opacity={0.8}
+					textStyle={{ color: '#FFF' }}
+				/>
 			</ScrollView>
-		); 
+		);
 	}
 }
 
@@ -266,51 +275,49 @@ const styles = StyleSheet.create({
 		backgroundColor: '#BB0000'
 	},
 	botonlogin: {
-		color: "#BB0000",
-		fontWeight: "bold"
+		color: '#BB0000',
+		fontWeight: 'bold'
 	},
 	loadReviews: {
 		marginTop: 20,
-		alignItems: "center"
+		alignItems: 'center'
 	},
 	ViewReview: {
-		flexDirection: "row",
+		flexDirection: 'row',
 		margin: 10,
 		paddingBottom: 20,
-		borderBottomColor: "#BB0000",
+		borderBottomColor: '#BB0000',
 		borderBottomWidth: 1
 	},
 	ViewImage: {
-		marginRight:15,
+		marginRight: 15
 	},
-	imageAvatarStyle:{
+	imageAvatarStyle: {
 		width: 50,
-		height: 50,
+		height: 50
 	},
 	viewInfo: {
 		flex: 1,
-		alignItems: "flex-start"
+		alignItems: 'flex-start'
 	},
-	reviewTitle:{
-		fontWeight: "bold"
+	reviewTitle: {
+		fontWeight: 'bold'
 	},
 	reviewText: {
 		paddingTop: 2,
-		color: "grey",
+		color: 'grey',
 		marginBottom: 5
 	},
 	reviewDate: {
 		marginTop: 5,
-		color: "grey",
+		color: 'grey',
 		fontSize: 12
-
 	},
 	revieHead: {
 		fontSize: 20,
-		textAlign: "center",
-		fontWeight: "bold",
+		textAlign: 'center',
+		fontWeight: 'bold',
 		marginTop: 20,
 		marginBottom: 10
-	},
+	}
 });
-

@@ -24,7 +24,6 @@ export default class AddReview extends Component {
 		const ratingValue = this.refs.rating.state.position;
 		const user = firebase.auth().currentUser;
 
-
 		this.setState({
 			loading: true
 		});
@@ -61,6 +60,7 @@ export default class AddReview extends Component {
 							loading: false
 						});
 						this.refs.toast.show('Comentario agregado correctamente', 1500, () => {
+							this.props.navigation.state.params.loadReview();
 							this.props.navigation.goBack();
 						});
 					})
