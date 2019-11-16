@@ -1,5 +1,5 @@
 Arguments: 
-  /home/desarrollo15/.nvm/versions/node/v10.16.3/bin/node /usr/share/yarn/bin/yarn.js start
+  /home/desarrollo15/.nvm/versions/node/v10.16.3/bin/node /usr/share/yarn/bin/yarn.js add firesql
 
 PATH: 
   /home/desarrollo15/.nvm/versions/node/v10.16.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: EROFS: read-only file system, mkdir '/tmp/yarn--1573688247730-0.5507932427072215'
+  Error: EACCES: permission denied, unlink '/home/desarrollo15/Documentos/Ranktuprofe/node_modules/react-native-action-button/ActionButtonItem.js'
 
 npm manifest: 
   {

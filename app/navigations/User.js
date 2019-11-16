@@ -17,9 +17,9 @@ import LoginScreen from '../screens/MyAccount/Login';
 import HomeScreen from '../screens/Maestros/Home';
 import AddNuevoScreen from '../screens/Maestros/Addnuevo';
 
-import DocenteScreen from '../screens/Maestros/Docente'
+import DocenteScreen from '../screens/Maestros/Docente';
 
-import AddReviewScreen from '../screens/Maestros/AddReview'
+import AddReviewScreen from '../screens/Maestros/AddReview';
 
 const homeScreenStack = createStackNavigator({
 	Home: {
@@ -36,17 +36,16 @@ const homeScreenStack = createStackNavigator({
 	},
 	Docente: {
 		screen: DocenteScreen,
-		navigationOptions: ({ navigation }) => ({ 
-              title: navigation.state.params.docente.item.docente.name  
-			})
+		navigationOptions: ({ navigation }) => ({
+			title: navigation.state.params.docente.item.docente.name
+		})
 	},
 	AddReview: {
 		screen: AddReviewScreen,
-		navigationOptions: ({ navigation }) => ({ 
-              title: navigation.state.params.name  
-			})
+		navigationOptions: ({ navigation }) => ({
+			title: navigation.state.params.name
+		})
 	}
-
 });
 
 const TopFiveScreenStack = createStackNavigator({
@@ -93,13 +92,13 @@ const RootStack = createBottomTabNavigator(
 		Home: {
 			screen: homeScreenStack,
 			navigationOptions: ({ navigation }) => ({
-				tabBar: 'Home',
+				tabBar: 'Agregados Recientemente',
 				tabBarIcon: ({ tintColor }) => (
 					<Icon name="compass-outline" type="material-community" zize={30} color={tintColor} />
 				)
 			})
 		},
-		TopFive: {
+		/*TopFive: {
 			screen: TopFiveScreenStack,
 			navigationOptions: ({ navigation }) => ({
 				tabBarLabel: 'Top 5',
@@ -107,7 +106,7 @@ const RootStack = createBottomTabNavigator(
 					<Icon name="star-outline" type="material-community" zize={30} color={tintColor} />
 				)
 			})
-		},
+		},*/
 		Search: {
 			screen: SearchScreenStack,
 			navigationOptions: ({ navigation }) => ({
