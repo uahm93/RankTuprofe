@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { white } from 'ansi-colors';
-import { SearchBar, Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { SearchBar, Button, ListItem, Icon } from 'react-native-elements';
 import { firebaseApp } from '../utils/Firebase';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -38,7 +37,38 @@ export default class Search extends Component {
 		this.setState({
 			docentes: resultDocentes
 		});
-		console.log(this.state);
+	};
+
+	renderListDocentes = (docentes) => {
+		if (docentes) {
+			return (
+				<View>
+					{docentes.map((docente, index) => {
+						let docenteClick = {
+							item: {
+								docente: null
+							}
+						};
+						docenteClick.item.docente = docente;
+						return (
+							<ListItem
+								key={index}
+								title={docente.name}
+								leftAvatar={{ source: { uri: docente.image } }}
+								rightIcon={<Icon type="material-community" name="chevron-right" />}
+								onPress={() => console.log('click')}
+							/>
+						);
+					})}
+				</View>
+			);
+		} else {
+			return (
+				<View>
+					<Text style={styles.notfoundText}>Busca tus docentes</Text>
+				</View>
+			);
+		}
 	};
 	desplegarDocente = () => {
 		this.setState({
@@ -51,7 +81,7 @@ export default class Search extends Component {
 		});
 	};
 	render() {
-		const { search, formDocente } = this.state;
+		const { search, formDocente, docentes } = this.state;
 		return (
 			<View style={styles.viewBody}>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -120,6 +150,7 @@ export default class Search extends Component {
 								color: 'white'
 							}}
 						/>
+						{this.renderDocentes(docentes)}
 					</View>
 				)}
 			</View>
@@ -151,5 +182,8 @@ const styles = StyleSheet.create({
 	botonDocente: {
 		height: 100,
 		width: 180
+	},
+	notfoundText: {
+		textAlign: 'center'
 	}
 });
