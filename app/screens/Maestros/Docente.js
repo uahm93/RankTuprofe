@@ -202,7 +202,7 @@ export default class Docente extends Component {
 						<Rating
 							style={{ position: 'absolute', right: 0 }}
 							imageSize={25}
-							readOnly
+							readonly
 							startingValue={parseFloat(rating)}
 						/>
 					</View>

@@ -36,7 +36,7 @@ export default class MyAccount extends Component {
 					.auth()
 					.createUserWithEmailAndPassword(validate.email, validate.password)
 					.then((result) => {
-						this.refs.toast.show('Rgistro correcto', 200, () => {
+						this.refs.toast.show('Registro correcto', 200, () => {
 							this.props.navigation.navigate('Myaccount');
 						});
 					})

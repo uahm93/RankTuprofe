@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, ScrollView, View, Text } from 'react-native';
 import { white } from 'ansi-colors';
 import { SearchBar, Button, ListItem, Icon } from 'react-native-elements';
 import { firebaseApp } from '../utils/Firebase';
@@ -16,6 +16,8 @@ export default class Search extends Component {
 		this.state = {
 			search: '',
 			docentes: null,
+			escuela: '',
+			facultad: '',
 			formDocente: ''
 		};
 	}
@@ -54,9 +56,10 @@ export default class Search extends Component {
 							<ListItem
 								key={index}
 								title={docente.name}
+								subtitle={`${docente.city}, ${docente.school}, ${docente.facultad}`}
 								leftAvatar={{ source: { uri: docente.image } }}
 								rightIcon={<Icon type="material-community" name="chevron-right" />}
-								onPress={() => console.log('click')}
+								onPress={() => this.clickDocente(docenteClick)}
 							/>
 						);
 					})}
@@ -70,6 +73,46 @@ export default class Search extends Component {
 			);
 		}
 	};
+	searchUniversidad = async (value) => {
+		this.setState({ escuela: value });
+		let resultDocentes = null;
+
+		const docentesList = fireSQL.query(`
+			SELECT * 
+			FROM Docentes
+			WHERE school LIKE '${value}%' 
+			`);
+		await docentesList
+			.then((response) => {
+				resultDocentes = response;
+			})
+			.catch(() => {});
+
+		this.setState({
+			docentes: resultDocentes
+		});
+	};
+	searchFacultad = async (value) => {
+		this.setState({ facultad: value });
+		// console.log(this.state.escuela);
+		// console.log(this.state.facultad);
+		let resultDocentes = null;
+
+		const docentesList = fireSQL.query(`
+			SELECT * 
+			FROM Docentes
+			WHERE facultad LIKE '${value}%'
+			`);
+		await docentesList
+			.then((response) => {
+				resultDocentes = response;
+			})
+			.catch(() => {});
+
+		this.setState({
+			docentes: resultDocentes
+		});
+	};
 	desplegarDocente = () => {
 		this.setState({
 			formDocente: true
@@ -80,10 +123,13 @@ export default class Search extends Component {
 			formDocente: false
 		});
 	};
+	clickDocente = (docente) => {
+		this.props.navigation.navigate('Docente', { docente });
+	};
 	render() {
-		const { search, formDocente, docentes } = this.state;
+		const { search, formDocente, docentes, escuela, facultad } = this.state;
 		return (
-			<View style={styles.viewBody}>
+			<ScrollView style={styles.viewBody}>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<View style={styles.searchUniversidad}>
 						<Button
@@ -128,8 +174,8 @@ export default class Search extends Component {
 					<View>
 						<SearchBar
 							placeholder="Buscar Instituto"
-							onChangeText={this.searchEscuela}
-							value={search}
+							onChangeText={this.searchUniversidad}
+							value={escuela}
 							containerStyle={styles.searchStyle}
 							searchIcon={{
 								name: 'office-building',
@@ -140,8 +186,8 @@ export default class Search extends Component {
 						/>
 						<SearchBar
 							placeholder="Buscar Facultad"
-							onChangeText={this.searchEscuela}
-							value={search}
+							onChangeText={this.searchFacultad}
+							value={facultad}
 							containerStyle={styles.searchStyle}
 							searchIcon={{
 								name: 'school',
@@ -150,10 +196,10 @@ export default class Search extends Component {
 								color: 'white'
 							}}
 						/>
-						{this.renderDocentes(docentes)}
 					</View>
 				)}
-			</View>
+				{this.renderListDocentes(docentes)}
+			</ScrollView>
 		);
 	}
 }
@@ -168,6 +214,7 @@ const styles = StyleSheet.create({
 	searchDocente: {
 		margin: 10,
 		marginTop: 20,
+		marginRight: 10,
 		right: 0
 	},
 	searchUniversidad: {
@@ -176,12 +223,12 @@ const styles = StyleSheet.create({
 	},
 	botonInstituto: {
 		backgroundColor: '#BB0000',
-		height: 100,
-		width: 180
+		height: 80,
+		width: 140
 	},
 	botonDocente: {
-		height: 100,
-		width: 180
+		height: 80,
+		width: 140
 	},
 	notfoundText: {
 		textAlign: 'center'

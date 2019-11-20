@@ -105,7 +105,7 @@ export default class infoUser extends Component {
 		const resultPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
 		if (resultPermission.status === 'denied') {
-			this.refs.toast.show('Es necesario aceptar los permisos para realixar esta accion', 1500);
+			this.refs.toast.show('Es necesario aceptar los permisos para realizar esta accion', 1500);
 		} else {
 			const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [ 4, 3 ] });
 			if (result.cancelled) {

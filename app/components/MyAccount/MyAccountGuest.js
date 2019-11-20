@@ -16,8 +16,8 @@ export default class MyAccountGuest extends Component {
 					PlaceholderContent={<ActivityIndicator />}
 					resizeMode="contain"
 				/>
-				<Text style={styles.title}>Consulta tu perfil </Text>
-				<Text>¿Como describirias este servicio?</Text>
+				<Text style={styles.title}>Inicia sesión para evaluar a tus docentes </Text>
+				<Text>¡Ahora te toca a ti evaluarlos!</Text>
 				<Button buttonStyle={styles.btnStyle} title="Ver tu petfil" onPress={() => goToScreen('Login')} />
 			</View>
 		);
