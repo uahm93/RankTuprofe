@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import { hasHardwareAsync } from 'expo-local-authentication';
 
 export const uploadImage = async (uri, nameImage, folder) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => { 
 		let xhr = new XMLHttpRequest();
 		xhr.onerror = reject;
 		xhr.onreadystatechange = () => {
